@@ -2,50 +2,49 @@
 text = input("Введите текст, который хотите зашифровать: ")
 # Пользователь вводит ключ
 k = int(input("Укажите ключ: "))
-# Пользователь вводит язык текста, который будет зашифрован
-language = input("На каком языке текст, который вы ввели (русский, английский): ")
 
-# Функция шифрования с тремя параметрами: текст, ключ, язык
-def caesar_cipher(user, key, lang, decrypt=False):
-    # Переменная результата шифрования; переменная, определяющая верхний и нижний регистр
-    res, n = [], ""
+# Функция шифрования и дешифровки с тремя параметрами: текст, ключ, флаг дешифровки
+def caesar_cipher(user, key, decrypt=False):
+    # Переменная результата шифрования
+    res = []
     # Если дешифровка, инвертировать ключ
     if decrypt:
         key = -key
 
-    # Проверка пользователем выбранного языка
-    if lang.lower() in ["русский", "russian"]:
-        # Двум переменным присваиваются русская азбука нижнего и верхнего регистра соответственно
-        dictionary, dictionary_upper = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя", "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
-    elif lang.lower() in ["английский", "english"]:
-        # Двум переменным присваиваются английской азбука нижнего и верхнего регистра соответственно
-        dictionary, dictionary_upper = "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    else:
-        return "Такого языка нет в опции"
+    # Две пары переменных, содержащих русскую и английскую азбуки в нижнем и верхнем регистрах соответственно
+    dictionary_ru, dictionary_ru_upper = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя", "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+    dictionary_en, dictionary_en_upper = "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     # Цикл проверки, где каждую итерацию будет обрабатываться один символ из текста последовательно
-    for i in range(len(user)):
-        # Проверка символа на верхний или нижний регистр
-        if user[i] in dictionary:
-            n = dictionary
-        elif user[i] in dictionary_upper:
-            n = dictionary_upper
+    for char in user:
+        # Проверка символа на принадлежность к русскому нижнему регистру
+        if char in dictionary_ru:
+            n = dictionary_ru
+        # Проверка символа на принадлежность к русскому верхнему регистру
+        elif char in dictionary_ru_upper:
+            n = dictionary_ru_upper
+        # Проверка символа на принадлежность к английскому нижнему регистру
+        elif char in dictionary_en:
+            n = dictionary_en
+        # Проверка символа на принадлежность к английскому верхнему регистру
+        elif char in dictionary_en_upper:
+            n = dictionary_en_upper
+        # Символ не принадлежит ни одной из азбук (символ не является буквой)
         else:
-            res.append(user[i])
+            res.append(char)
             continue
 
-        # Если символ есть в списке n (является буквой), то будет происходить его зашифровка
-        if user[i] in n:
-            j = n.index(user[i])
-            res.append(n[(j + key) % len(n)])
+        # Если символ есть в списке n (является буквой), то будет происходить его зашифровка/дешифровка
+        j = n.index(char)
+        res.append(n[(j + key) % len(n)])
 
     # Функция возвращает зашифрованный или расшифрованный текст
     return ''.join(res)
 
 # Вывод зашифрованного текста
-encrypted_text = caesar_cipher(text, k, language)
+encrypted_text = caesar_cipher(text, k)
 print("Зашифрованный текст:", encrypted_text)
 
 # Расшифровка текста
-decrypted_text = caesar_cipher(encrypted_text, k, language, decrypt=True)
+decrypted_text = caesar_cipher(encrypted_text, k, decrypt=True)
 print("Расшифрованный текст:", decrypted_text)
