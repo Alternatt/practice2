@@ -1,0 +1,272 @@
+%% -*- coding: utf-8 -*-
+\documentclass[12pt,a4paper]{scrartcl} 
+\usepackage[T2A]{fontenc}           % кодировка
+\usepackage[utf8]{inputenc}         % кодировка исходного текста
+\usepackage[english,russian]{babel} % локализация и переносы
+
+\usepackage{color} % подключить пакет color
+% выбрать цвета
+\definecolor{Black}{RGB}{0,0,0}
+\definecolor{Blue}{RGB}{0,0,128}
+% назначить цвета при подключении hyperref
+\usepackage[unicode, colorlinks, urlcolor=Blue, linkcolor=Black, pagecolor=Black]{hyperref}
+\usepackage{indentfirst}
+\usepackage{misccorr}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{subcaption}
+
+\captionsetup[figure]{labelformat=empty} % Убираем стандартную подпись ЕСЛИ ТРАБЛЫ УБИРАЙ
+
+\begin{document}
+\begin{titlepage}
+		\begin{center}
+			\large
+			МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ
+			
+			Федеральное государственное бюджетное образовательное учреждение высшего образования
+			
+			\textbf{АДЫГЕЙСКИЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ}
+			\vspace{0.25cm}
+			
+			Инженерно-физический факультет
+			
+			Кафедра автоматизированных систем обработки информации и управления
+			\vfill
+
+			\vfill
+			
+			\textsc{Отчет по практике}\\[5mm]
+			
+			{\LARGE Программаная реализация алгоритма \textit{Шифрования / Дешифрования текста с использованием шифра Цезаря.}}
+			\bigskip
+			
+			2 курс, группа 2ИВТ2
+		\end{center}
+		\vfill
+		
+		\newlength{\ML}
+		\settowidth{\ML}{«\underline{\hspace{0.7cm}}» \underline{\hspace{2cm}}}
+		\hfill\begin{minipage}{0.5\textwidth}
+			Выполнил:\\
+			\underline{\hspace{\ML}} Д.\,А.~Перегородов\\
+			«\underline{\hspace{0.7cm}}» \underline{\hspace{2cm}} 2024 г.
+		\end{minipage}%
+		\bigskip
+		
+		\hfill\begin{minipage}{0.5\textwidth}
+			Руководитель:\\
+			\underline{\hspace{\ML}} С.\,В.~Теплоухов\\
+			«\underline{\hspace{0.7cm}}» \underline{\hspace{2cm}} 2024 г.
+		\end{minipage}%
+		\vfill
+		
+		\begin{center}
+			Майкоп, 2024 г.
+		\end{center}
+  \end{titlepage}
+
+
+
+\tableofcontents %Оглавление
+
+\newpage
+
+\section{Введение}
+\label{sec:intro}
+
+% Что должно быть во введении
+\begin{enumerate}
+ \item Текстовая формулировка задачи
+ \item Код, решающий данную задачу
+ \item Скриншот решения программы
+\end{enumerate}
+\section{Текстовая формулировка задачи} 
+\textbf {Задание:} 
+
+Написать программу для шифрования / дешифрования текста с использованием шифра Цезаря.
+
+\textbf{Теория:}
+
+Шифр Цезаря\cite{Шифр Цезаря:1}. — шифр, при использовании которого каждая буква из открытого текста заменяется на такую букву, которая в алфавите находится на некотором постоянном числе позиций левее или правее от рассматриваемой буквы.
+
+\textbf{Шифр Цезаря}, также известный как сдвиговый шифр или шифр сдвига, является одним из самых простых и древних методов шифрования текста. Назван в честь римского императора Юлия Цезаря, который использовал его для секретной переписки. Суть шифра заключается в сдвиге каждой буквы открытого текста на фиксированное число позиций в алфавите.\\
+\textbf{Основные понятия}
+\begin{itemize}
+    \item \textbf{Открытый текст}: Исходное сообщение, которое нужно зашифровать.
+    \item \textbf{Шифротекст}: Сообщение после шифрования.
+    \item \textbf{Ключ}: Число, на которое сдвигаются буквы в алфавите.
+\end{itemize}
+Шифр Цезаря использует моноалфавитную замену, при которой каждая буква алфавита замещается другой, находящейся на фиксированном расстоянии (ключе) от нее. Например, при ключе 3 (часто используемом в примерах), 'A' становится 'D', 'B' становится 'E' и так далее.
+
+\newpage
+
+\section{Ход работы}
+
+\subsection{Код, решающий данную задачу}
+
+\subsubsection{Создание и настройка главного окна}
+1. Импорт библиотек и создание главного окна:
+\begin{verbatim}
+import tkinter as tk
+from tkinter import messagebox
+
+root = tk.Tk()
+root.title("Шифратор Цезаря")
+root.resizable(False, False)
+\end{verbatim}
+
+\subsubsection{Создание функции шифрования и дешифровки}
+2. Определение функции шифрования и дешифровки с использованием алгоритма Цезаря:
+\begin{verbatim}
+def caesar_cipher(user, key, decrypt=False):
+    res = []
+    if decrypt:
+        key = -key
+
+    dictionary_ru = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+    dictionary_ru_upper = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+    dictionary_en = "abcdefghijklmnopqrstuvwxyz"
+    dictionary_en_upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    for char in user:
+        if char in dictionary_ru:
+            n = dictionary_ru
+        elif char in dictionary_ru_upper:
+            n = dictionary_ru_upper
+        elif char in dictionary_en:
+            n = dictionary_en
+        elif char in dictionary_en_upper:
+            n = dictionary_en_upper
+        else:
+            res.append(char)
+            continue
+
+        j = n.index(char)
+        res.append(n[(j + key) % len(n)])
+    return ''.join(res)
+\end{verbatim}
+
+\subsubsection{Создание функции для выполнения действия шифрования или дешифрования}
+3. Определение функции для обработки данных, введённых пользователем, и выполнения шифрования или дешифрования:
+\begin{verbatim}
+def execute_cipher():
+    try:
+        key = int(key_entry.get())
+    except ValueError:
+        messagebox.showerror("Ошибка", "Ключ должен быть целым числом.")
+        return
+    text = text_entry.get("1.0", tk.END).strip()
+    if cipher_var.get() == 1:
+        result = caesar_cipher(text, key)
+    elif cipher_var.get() == 2:
+        result = caesar_cipher(text, key, decrypt=True)
+    else:
+        messagebox.showerror("Ошибка","Выберите действие(Шифрование/Дешифрование).")
+        return
+    result_entry.delete("1.0", tk.END)
+    result_entry.insert(tk.END, result)
+\end{verbatim}
+
+\subsubsection{Создание виджетов в главном окне}
+4. Создание и настройка виджетов для интерфейса пользователя:
+\begin{verbatim}
+tk.Label(root, text='Шифрование/Дешифрование русского/английского языка', 
+font=("Arial", 20)).grid(row=0, column=0)
+cipher_var = tk.IntVar()
+encrypt_radio = tk.Radiobutton(root, text="Шифрование", 
+variable=cipher_var, value=1, font=("Arial", 15))
+decrypt_radio = tk.Radiobutton(root, text="Дешифрование", 
+variable=cipher_var, value=2, font=("Arial", 15))
+
+text_label = tk.Label(root, text="Введите текст:", font=("Arial", 15))
+text_entry = tk.Text(root, height=10, width=70, font=("Arial", 11))
+
+key_label = tk.Label(root, text="Введите ключ:", font=("Arial", 15))
+key_entry = tk.Entry(root, font=("Arial", 11), width=15)
+
+execute_button = tk.Button(root, text="Выполнить", 
+command=execute_cipher, font=("Arial", 13))
+
+result_label = tk.Label(root, text="Результат:", font=("Arial", 15))
+result_entry = tk.Text(root, height=10, width=70, font=("Arial", 11))
+\end{verbatim}
+\subsubsection{Размещение виджетов в главном окне}
+5. Размещение виджетов для интерфейса пользователя:
+\begin{verbatim}
+# Размещение виджетов в окне
+encrypt_radio.grid(row=1, column=0, stick='w', padx=100)
+decrypt_radio.grid(row=1, column=0, stick='e', padx=100)
+
+text_label.grid(row=2, column=0, stick='w')
+text_entry.grid(row=2, column=0, stick='e', padx=10, pady=10)
+
+key_label.grid(row=3, column=0, stick='w')
+key_entry.grid(row=3, column=0, stick='w', padx=160)
+
+execute_button.grid(row=3, column=0, columnspan=2, pady=10)
+
+result_label.grid(row=4, column=0, stick='w')
+result_entry.grid(row=4, column=0, stick='e', padx=10, pady=10)
+\end{verbatim}
+
+\subsubsection{Запуск главного цикла}
+6. Запуск главного цикла приложения:
+\begin{verbatim}
+root.mainloop()
+\end{verbatim}
+
+\newpage
+
+\subsection{\text{Скриншоты решения программы}}
+\label{sec:picexample}
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.62\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Шифровка.png}
+        \caption{Шифровка}
+        \label{fig:img1}
+    \end{subfigure}
+    \vskip\baselineskip
+    \centering
+    \begin{subfigure}[b]{0.62\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Дешифровка.png}
+        \caption{Дешифровка}
+        \label{fig:img2}
+    \end{subfigure}
+    \caption{Рис 1-2: Шифровка и Дешифровка}
+\end{figure}
+\newpage
+\begin{figure}[h]
+        \centering
+    \begin{subfigure}[b]{0.62\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{ошибка ключа.png}
+        \caption{Ошибка ключа}
+        \label{fig:img1}
+    \end{subfigure}
+    \vskip\baselineskip
+    \centering
+    \begin{subfigure}[b]{0.62\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Не выбрана шифровка.png}
+        \caption{Не выбрана шифровка}
+        \label{fig:img2}
+    \end{subfigure}
+    \caption{Рис 3-4: Ошибки}
+
+    
+    \label{fig:fourimages}
+\end{figure}
+
+\label{sec:picexample}
+
+\newpage
+\begin{thebibliography}{9}
+\bibitem{Шифр Цезаря:1} Шифр Цезаря: \href{https://ru.wikipedia.org/wiki/Шифр_Цезаря}{https://ru.wikipedia.org/wiki/Шифр\_Цезаря}
+
+\end{thebibliography}
+
+\end{document}
