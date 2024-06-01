@@ -1,58 +1,98 @@
-# Функция для проверки и получения целого числа от пользователя
-def get_integer_input(prompt):
-    while True:
-        try:
-            return int(input(prompt))
-        except ValueError:
-            print("Пожалуйста, введите целое число.")
+import tkinter as tk
+from tkinter import messagebox
 
-# Текст, который пользователь хочет ввести
-text = input("Введите текст, который хотите зашифровать: ")
-# Пользователь вводит ключ с проверкой
-k = get_integer_input("Укажите ключ: ")
-
-# Функция шифрования и дешифровки с тремя параметрами: текст, ключ, флаг дешифровки
+# Функция шифрования и дешифровки
 def caesar_cipher(user, key, decrypt=False):
-    # Переменная результата шифрования
     res = []
-    # Если дешифровка, инвертировать ключ
     if decrypt:
         key = -key
 
-    # Две пары переменных, содержащих русскую и английскую азбуки в нижнем и верхнем регистрах соответственно
     dictionary_ru, dictionary_ru_upper = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя", "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
     dictionary_en, dictionary_en_upper = "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-    # Цикл проверки, где каждую итерацию будет обрабатываться один символ из текста последовательно
     for char in user:
-        # Проверка символа на принадлежность к русскому нижнему регистру
         if char in dictionary_ru:
             n = dictionary_ru
-        # Проверка символа на принадлежность к русскому верхнему регистру
         elif char in dictionary_ru_upper:
             n = dictionary_ru_upper
-        # Проверка символа на принадлежность к английскому нижнему регистру
         elif char in dictionary_en:
             n = dictionary_en
-        # Проверка символа на принадлежность к английскому верхнему регистру
         elif char in dictionary_en_upper:
             n = dictionary_en_upper
-        # Символ не принадлежит ни одной из азбук (символ не является буквой)
         else:
             res.append(char)
             continue
 
-        # Если символ есть в списке n (является буквой), то будет происходить его зашифровка/дешифровка
         j = n.index(char)
         res.append(n[(j + key) % len(n)])
 
-    # Функция возвращает зашифрованный или расшифрованный текст
     return ''.join(res)
 
-# Вывод зашифрованного текста
-encrypted_text = caesar_cipher(text, k)
-print("Зашифрованный текст:", encrypted_text)
+# Функция для выполнения действия шифрования или дешифрования
+def execute_cipher():
+    try:
+        key = int(key_entry.get())
+    except ValueError:
+        messagebox.showerror("Ошибка", "Ключ должен быть целым числом.")
+        return
 
-# Расшифровка текста
-decrypted_text = caesar_cipher(encrypted_text, k, decrypt=True)
-print("Расшифрованный текст:", decrypted_text)
+    text = text_entry.get("1.0", tk.END).strip()
+    if cipher_var.get() == 1:
+        result = caesar_cipher(text, key)
+    elif cipher_var.get() == 2:
+        result = caesar_cipher(text, key, decrypt=True)
+    else:
+        messagebox.showerror("Ошибка", "Выберите действие (Шифрование/Дешифрование).")
+        return
+
+    result_entry.delete("1.0", tk.END)
+    result_entry.insert(tk.END, result)
+
+# Создание главного окна
+root = tk.Tk()
+# Изменение тайтла
+root.title("Шифратор Цезаря")
+# Изменение размера окна и его расположения
+ #root.geometry("500x600+100+100")
+# Максимальный и минимальный размер окна, который может выставить пользователь
+'''root.minsize(500, 600)
+root.maxsize(1000, 1100) '''
+# Если выставить false, то пользователь не сможет менять размеры окна
+root.resizable(False,False)
+# Создание виджетов
+tk.Label(root, text='Шифрование/Дешифрование русского/английского языка', font=("Arial", 20)).grid(row=0, column=0)
+
+cipher_var = tk.IntVar()
+encrypt_radio = tk.Radiobutton(root, text="Шифрование", variable=cipher_var, value=1, font=("Arial", 15))
+decrypt_radio = tk.Radiobutton(root, text="Дешифрование", variable=cipher_var, value=2, font=("Arial", 15))
+
+text_label = tk.Label(root, text="Введите текст:", font=("Arial", 15))
+text_entry = tk.Text(root, height=10, width=70, font=("Arial", 11))
+
+key_label = tk.Label(root, text="Введите ключ:", font=("Arial", 15))
+key_entry = tk.Entry(root, font=("Arial", 11), width=15)
+
+execute_button = tk.Button(root, text="Выполнить", command=execute_cipher, font=("Arial", 13))
+
+result_label = tk.Label(root, text="Результат:", font=("Arial", 15))
+result_entry = tk.Text(root, height=10, width=70, font=("Arial", 11))
+
+
+# Размещение виджетов в окне
+encrypt_radio.grid(row=1, column=0, stick='w', padx=100)
+decrypt_radio.grid(row=1, column=0, stick='e', padx=100)
+
+text_label.grid(row=2, column=0, stick='w')
+text_entry.grid(row=2, column=0, stick='e', padx=10, pady=10)
+
+key_label.grid(row=3, column=0, stick='w')
+key_entry.grid(row=3, column=0, stick='w', padx=160)
+
+execute_button.grid(row=3, column=0, columnspan=2, pady=10)
+
+result_label.grid(row=4, column=0, stick='w')
+result_entry.grid(row=4, column=0, stick='e', padx=10, pady=10)
+
+
+# Запуск главного цикла
+root.mainloop()
